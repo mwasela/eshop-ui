@@ -45,26 +45,29 @@ const PriceListManager: React.FC = () => {
     {
       title: 'Cost (KES)',
       dataIndex: 'costprice',
-      valueType: 'money',
+      //valueType: 'money',
       search: false,
     },
     {
       title: 'Wholesale (KES)',
       dataIndex: 'wholsaleprice',
-      valueType: 'money',
+      //valueType: 'money',
       search: false,
     },
     {
-      title: 'Retail (KES)',
+      title: 'Retail Price',
       dataIndex: 'retailprice',
-      valueType: 'money',
+      //valueType: 'money',
       search: false,
+      render: (val) => <span style={{ color: val > 0 ? 'green' : 'red' }}>KES {val}</span>,
+    },
+     {
     },
     {
-      title: 'Margin',
+      title: 'Profit Margin',
       render: (_, record) => {
         const margin = record.retailprice - record.costprice;
-        return <span style={{ color: margin > 0 ? 'green' : 'red' }}>{margin}</span>;
+        return <span style={{ color: margin > 0 ? 'green' : 'red' }}>KES {margin}</span>;
       },
       search: false,
     },

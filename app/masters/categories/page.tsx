@@ -1,9 +1,9 @@
 "use client";
 import React, { useRef, useState } from 'react';
-import { PlusOutlined, EditOutlined, DeleteOutlined, FolderOpenOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, FolderOpenOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, ModalForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components';
-import { Button, message, Popconfirm } from 'antd';
+import { ProTable, ModalForm, ProFormText, ProFormTextArea, ProFormSelect } from '@ant-design/pro-components';
+import { Button, message, Popconfirm, Tag } from 'antd';
 import axiosInstance from '@/helpers/axios';
 
 interface CategoryItem {
@@ -40,6 +40,25 @@ const CategoryManager: React.FC = () => {
       dataIndex: 'CreatedAt',
       valueType: 'dateTime',
       search: false,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      valueEnum: {
+        1: { text: 'Active', status: 'Success' },
+        2: { text: 'Inactive', status: 'Error' },
+      },
+      render: (_, record) => (
+        record.status === 1 ? (
+          <Tag icon={<CheckCircleOutlined />} color="success" style={{ fontSize: '12px', padding: '4px 8px' }}>
+            Active
+          </Tag>
+        ) : (
+          <Tag icon={<CloseCircleOutlined />} color="error" style={{ fontSize: '12px', padding: '4px 8px' }}>
+            Inactive
+          </Tag>
+        )
+      ),
     },
     {
       title: 'Actions',
@@ -99,12 +118,12 @@ const CategoryManager: React.FC = () => {
         title={currentRow ? "Edit Category" : "New Category"}
         open={isModalVisible}
         onOpenChange={setIsModalVisible}
-        // Mapping lowercase GET fields to PascalCase POST fields
+        // Mapping lowercase GET fields to PascalCase POST fields...
         initialValues={currentRow ? {
           Name: currentRow.name,
           Description: currentRow.description,
         } : {}}
-        modalProps={{ destroyOnClose: true }}
+        modalProps={{ destroyOnHidden: true }}
         onFinish={async (values) => {
           try {
             if (currentRow) {
@@ -134,6 +153,17 @@ const CategoryManager: React.FC = () => {
           placeholder="Briefly describe what parts belong here"
           rules={[{ required: true }]}
         />
+        {currentRow && (
+          <ProFormSelect
+            name="Status"
+            label="status"
+            options={[
+              { label: 'Active', value: 1 },
+              { label: 'Inactive', value: 0 },
+            ]}
+            rules={[{ required: true }]}
+          />
+        )}
       </ModalForm>
     </>
   );

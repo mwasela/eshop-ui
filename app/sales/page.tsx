@@ -55,14 +55,19 @@ const OrderItemsManager: React.FC = () => {
     {
       title: 'Unit Price',
       dataIndex: 'unit_price',
-      valueType: 'money',
+      //valueType: 'money',
       search: false,
+      render: (val) => <span style={{ color: val > 0 ? 'green' : 'red' }}>KES {val}</span>,
+    },
+    {
     },
     {
       title: 'Total Price',
       dataIndex: 'total_price',
-      valueType: 'money',
+      //valueType: 'money',
       search: false,
+      render: (val) => <span style={{ color: val > 0 ? 'green' : 'red' }}>KES {val}</span>,
+
     },
     {
       title: 'Actions',
@@ -114,7 +119,7 @@ const OrderItemsManager: React.FC = () => {
               setIsModalVisible(true); 
             }}
           >
-            Add Item to Order
+            New Sale
           </Button>,
         ]}
         request={async (params) => {
@@ -128,6 +133,7 @@ const OrderItemsManager: React.FC = () => {
         title={currentRow ? "Edit Order Item" : "Add Item to Order"}
         open={isModalVisible}
         form={form}
+        width={ '30vw' }
         onOpenChange={setIsModalVisible}
         initialValues={currentRow || {}}
         modalProps={{ destroyOnClose: true }}
@@ -135,6 +141,7 @@ const OrderItemsManager: React.FC = () => {
           if (currentRow) {
             await axiosInstance.put(`/api/orderitems/${currentRow.ID}`, values);
           } else {
+            console.log('Creating new order item with values:', values);
             await axiosInstance.post('/api/orderitems', values);
           }
           actionRef.current?.reload();
@@ -143,12 +150,12 @@ const OrderItemsManager: React.FC = () => {
         }}
       >
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <ProFormDigit 
+          {/* <ProFormDigit 
             name="order_id" 
             label="Order Reference #" 
             rules={[{ required: true }]} 
             placeholder="Enter Order ID"
-          />
+          /> */}
           <ProFormSelect
             name="product_id"
             label="Product"
@@ -171,12 +178,12 @@ const OrderItemsManager: React.FC = () => {
             min={1} 
             rules={[{ required: true }]} 
           />
-          <ProFormDigit 
+          {/* <ProFormDigit 
             name="unit_price" 
             label="Unit Price" 
             min={0} 
             rules={[{ required: true }]} 
-          />
+          /> */}
           
           {/* Automatically calculate Total Price */}
           <ProFormDependency name={['quantity', 'unit_price']}>
@@ -184,6 +191,8 @@ const OrderItemsManager: React.FC = () => {
               const total = (quantity || 0) * (unit_price || 0);
               return (
                 <ProFormDigit
+                  //move to rightflex end
+                  //style={{ textAlign: 'right' }}
                   name="total_price"
                   label="Total Price"
                   readonly

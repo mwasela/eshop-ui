@@ -20,7 +20,7 @@ export default function SidebarLink({ href, icon, label, pathname, isSublink = f
         ${isSublink ? 'text-sm' : ''}
         ${collapsed ? 'justify-center px-0' : ''}
       `}
-      title={collapsed ? label : ""}
+        
     >
       <div className={`${isActive ? 'scale-110' : ''} transition-transform`}>
         {icon}

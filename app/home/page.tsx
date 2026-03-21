@@ -1,5 +1,6 @@
 "use client";
 import axiosInstance from "@/helpers/axios";
+import { useRouter } from "next/navigation";
 import React, { useMemo } from "react";
 import { ProCard, ProTable, StatisticCard } from "@ant-design/pro-components";
 import { Button, Tag, Space, Typography, Progress, Badge, Avatar } from "antd";
@@ -17,6 +18,7 @@ import {
 const { Text, Title } = Typography;
 
 export default function HomePage() {
+  const router = useRouter();
   const [data, setData] = React.useState({
     products: [], inventory: [], orders: [], categories: [], suppliers: [], customers: []
   });
@@ -56,7 +58,7 @@ export default function HomePage() {
       subTitle="Real-time performance metrics for your spares shop"
       extra={[
         <Button key="2" icon={<HistoryOutlined />}>Audit Logs</Button>,
-        <Button key="1" type="primary" icon={<PlusOutlined />}>New Sale</Button>,
+        <Button key="1" type="primary" icon={<PlusOutlined />} onClick={() => router.push('/sales')}>New Sale</Button>,
       ]}
     >
       
@@ -108,7 +110,7 @@ export default function HomePage() {
         <div className="lg:col-span-2 space-y-6">
           <ProTable
             headerTitle={<Space><ShoppingCartOutlined /> <Title level={5} style={{ margin: 0 }}>Recent Orders</Title></Space>}
-            dataSource={data.orders.slice(0, 6)}
+            dataSource={data.orders}
             search={false}
             options={false}
             pagination={false}
@@ -132,8 +134,8 @@ export default function HomePage() {
               { 
                 title: 'Price', 
                 dataIndex: 'total_price', 
-                valueType: 'money',
-                render: (val) => <Text strong style={{ color: '#2f54eb' }}>{val}</Text>
+                // valueType: 'money',
+                render: (val) => <Text strong style={{ color: '#2f54eb' }}>KES {val}</Text>
               },
               { 
                 title: 'Status', 

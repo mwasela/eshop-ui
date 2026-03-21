@@ -10,7 +10,7 @@ export default function LandingPage() {
           <Cpu size={32} />
         </div>
         <h1 className="max-w-3xl text-5xl font-bold tracking-tight sm:text-6xl">
-          Auto<span className="text-blue-600">Spares</span> Management
+          Spare<span className="text-blue-600">Hub</span> Management
         </h1>
 
         <h2 className="mt-4 text-5xl tracking-tight text-zinc-600 dark:text-zinc-400">

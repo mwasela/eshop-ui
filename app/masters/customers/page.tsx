@@ -106,6 +106,7 @@ const CustomerManager: React.FC = () => {
       <ProTable<CustomerItem>
         headerTitle="Customer Database"
         actionRef={actionRef}
+        scroll={{x: 'max-content'}}
         rowKey="ID"
         search={{ labelWidth: 'auto' }}
         toolBarRender={() => [

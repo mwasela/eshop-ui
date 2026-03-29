@@ -75,6 +75,7 @@ const SupplierManager: React.FC = () => {
       <ProTable<SupplierItem>
         headerTitle="Supplier Directory"
         actionRef={actionRef}
+        scroll={{ x: 'max-content' }}
         rowKey="ID"
         search={{ labelWidth: 'auto' }}
         toolBarRender={() => [

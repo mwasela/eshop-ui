@@ -98,6 +98,7 @@ const PriceListManager: React.FC = () => {
       <ProTable<PriceListItem>
         headerTitle="Master Price List"
         actionRef={actionRef}
+        scroll={{x:'max-content'}}
         rowKey="ID"
         search={{ labelWidth: 'auto' }}
         toolBarRender={() => [

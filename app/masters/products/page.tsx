@@ -101,6 +101,7 @@ const ProductManager: React.FC = () => {
       <ProTable<ProductItem>
         headerTitle="Product Catalog"
         actionRef={actionRef}
+        scroll={{ x: 'max-content'}}
         rowKey="ID"
         search={{ labelWidth: 'auto' }}
         toolBarRender={() => [

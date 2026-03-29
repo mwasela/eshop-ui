@@ -95,6 +95,7 @@ const CategoryManager: React.FC = () => {
       <ProTable<CategoryItem>
         headerTitle="Product Categories"
         actionRef={actionRef}
+        scroll={{ x: 'max-content' }}
         rowKey="ID"
         search={{ labelWidth: 'auto' }}
         toolBarRender={() => [

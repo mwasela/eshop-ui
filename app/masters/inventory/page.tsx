@@ -14,7 +14,7 @@ import { Button, Form, message } from "antd";
 import moment from "moment";
 
 export default function InventoryPage() {
-  const tableRef = useRef<any>();
+  const tableRef = useRef<any>(undefined);
   const [form] = Form.useForm(); // This is the key to fixing initialValues
   const [modalOpen, setModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<any>(null);

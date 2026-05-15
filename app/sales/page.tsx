@@ -26,7 +26,7 @@ interface OrderItem {
 }
 
 const OrderItemsManager: React.FC = () => {
-  const actionRef = useRef<ActionType>();
+  const actionRef = useRef<ActionType | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState<OrderItem | null>(null);
   const [form] = Form.useForm();
@@ -57,7 +57,10 @@ const OrderItemsManager: React.FC = () => {
       dataIndex: 'unit_price',
       //valueType: 'money',
       search: false,
-      render: (val) => <span style={{ color: val > 0 ? 'green' : 'red' }}>KES {val}</span>,
+      render: (val) => {
+        const amount = Number(val) || 0;
+        return <span style={{ color: amount > 0 ? 'green' : 'red' }}>KES {amount}</span>;
+      },
     },
     {
     },
@@ -66,7 +69,10 @@ const OrderItemsManager: React.FC = () => {
       dataIndex: 'total_price',
       //valueType: 'money',
       search: false,
-      render: (val) => <span style={{ color: val > 0 ? 'green' : 'red' }}>KES {val}</span>,
+      render: (val) => {
+        const amount = Number(val) || 0;
+        return <span style={{ color: amount > 0 ? 'green' : 'red' }}>KES {amount}</span>;
+      },
 
     },
     {
@@ -179,7 +185,7 @@ const OrderItemsManager: React.FC = () => {
             rules={[{ required: true }]} 
           />
           {/* <ProFormDigit 
-            name="unit_price" 
+            name="unit_price" k6qw6
             label="Unit Price" 
             min={0} 
             rules={[{ required: true }]} 

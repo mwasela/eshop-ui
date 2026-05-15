@@ -11,10 +11,11 @@ interface CategoryItem {
   name: string;
   description: string;
   CreatedAt: string;
+  status?: number;
 }
 
 const CategoryManager: React.FC = () => {
-  const actionRef = useRef<ActionType>();
+  const actionRef = useRef<ActionType | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState<CategoryItem | null>(null);
 

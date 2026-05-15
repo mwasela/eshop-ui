@@ -17,7 +17,7 @@ interface CompanyItem {
 }
 
 const CompanyManager: React.FC = () => {
-  const actionRef = useRef<ActionType>();
+  const actionRef = useRef<ActionType | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState<CompanyItem | null>(null);
 

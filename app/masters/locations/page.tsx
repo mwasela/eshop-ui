@@ -16,7 +16,7 @@ interface LocationItem {
 }
 
 const LocationManager: React.FC = () => {
-  const actionRef = useRef<ActionType>();
+  const actionRef = useRef<ActionType | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState<LocationItem | null>(null);
   const [form] = Form.useForm();

@@ -22,8 +22,10 @@ interface PriceListItem {
   };
 }
 
+const asCurrencyAmount = (value: unknown) => Number(value) || 0;
+
 const PriceListManager: React.FC = () => {
-  const actionRef = useRef<ActionType>();
+  const actionRef = useRef<ActionType | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState<PriceListItem | null>(null);
 
@@ -59,7 +61,10 @@ const PriceListManager: React.FC = () => {
       dataIndex: 'retailprice',
       //valueType: 'money',
       search: false,
-      render: (val) => <span style={{ color: val > 0 ? 'green' : 'red' }}>KES {val}</span>,
+      render: (val) => {
+        const amount = asCurrencyAmount(val);
+        return <span style={{ color: amount > 0 ? 'green' : 'red' }}>KES {amount}</span>;
+      },
     },
      {
     },

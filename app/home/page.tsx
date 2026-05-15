@@ -48,8 +48,8 @@ export default function HomePage() {
   }, []);
 
   const metrics = useMemo(() => {
-    const totalSales = data.orders.reduce((sum, item) => sum + (item.total_price || 0), 0);
-    const lowStock = data.inventory.filter(item => item.stock_on_hand <= item.min_stock_level);
+    const totalSales = data.orders.reduce((sum, item:any) => sum + (item.total_price || 0), 0);
+    const lowStock = data.inventory.filter((item:any) => item.stock_on_hand <= item.min_stock_level);
     return { totalSales, lowStock };
   }, [data]);
 
@@ -118,7 +118,7 @@ export default function HomePage() {
             columns={[
               {
                 title: 'Item Details',
-                render: (_, record) => (
+                render: (_, record:any,) => (
                   <Space>
                     <div style={{ width: 40, height: 40, background: '#f5f5f5', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <StockOutlined style={{ color: '#bfbfbf' }} />
@@ -153,11 +153,11 @@ export default function HomePage() {
             bordered 
             style={{ borderRadius: '8px' }}
           >
-            {metrics.lowStock.slice(0, 4).map((item, idx) => (
+            {metrics.lowStock.slice(0, 4).map((item: any, idx: number) => (
               <div key={idx} style={{ marginBottom: 12, padding: '8px', background: '#fff2f0', borderRadius: '4px', borderLeft: '4px solid #ff4d4f' }}>
                 <div className="flex justify-between">
                   <Text strong>{item.product?.name}</Text>
-                  <Text danger>{item.stock_on_hand} left</Text>
+                  <Text type="danger">{item.stock_on_hand} left</Text>
                 </div>
                 <Progress percent={(item.stock_on_hand / item.min_stock_level) * 100} size="small" showInfo={false} status="exception" />
               </div>
@@ -166,7 +166,7 @@ export default function HomePage() {
           </ProCard>
 
           <ProCard title="Category Mix" bordered style={{ borderRadius: '8px' }}>
-            {data.categories.map((cat, i) => (
+            {data.categories.map((cat: any, i: number) => (
               <div key={i} className="mb-4">
                 <div className="flex justify-between mb-1">
                   <Text type="secondary">{cat.name}</Text>

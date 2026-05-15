@@ -183,6 +183,18 @@ export default function InventoryPage() {
             label="Low Stock Threshold"
             min={0}
           />
+          <ProFormSelect
+            name="store_id"
+            label="Select Store"
+            rules={[{ required: true }]}
+            request={async () => {
+              const res = await axiosInstance.get('/api/stores');
+              return res.data.stores.map((s: any) => ({
+                label: s.store_name,
+                value: s.id,
+              }));
+            }}
+          />
         </div>
       </ModalForm>
     </PageContainer>

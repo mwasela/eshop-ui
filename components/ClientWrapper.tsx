@@ -6,16 +6,19 @@ import { usePathname, useRouter } from 'next/navigation';
 import { 
   Home, 
   LayoutDashboard, 
+  Menu,
   Users, 
   ChevronDown, 
   Folder, 
   DollarSign, 
   LogOut, 
+  X,
   User as UserIcon,
   Bell
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { Dropdown, Avatar, Button, Space } from 'antd';
+import { Dropdown, Avatar } from 'antd';
+import type { MenuProps } from 'antd';
 import AuthGuard from './AuthGuard';
 import axiosInstance from '@/helpers/axios';
 
@@ -25,6 +28,8 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
   const showSidebar = pathname !== '/' && pathname !== '/login';
   
   const [user, setUser] = useState<{ username: string; email: string } | null>(null); 
+  const [isMobile, setIsMobile] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const fetchUser = async () => {
     try {
@@ -43,20 +48,41 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
     }
   }, [showSidebar]);
 
+  useEffect(() => {
+    const updateViewport = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setSidebarOpen(false);
+      }
+    };
+
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+
+    return () => window.removeEventListener('resize', updateViewport);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [pathname, isMobile]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
     router.push('/login');
   };
 
-  const userMenuItems = [
+  const userMenuItems: MenuProps['items'] = [
     {
       key: 'profile',
       label: 'My Profile',
       icon: <UserIcon size={14} />,
     },
     {
-      type: 'divider',
+      type: 'divider' as const,
     },
     {
       key: 'logout',
@@ -70,27 +96,65 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
   return (
     <div className="flex min-h-screen bg-zinc-50">
       {showSidebar && (
-        <nav className="w-64 h-screen sticky top-0 bg-white border-r border-zinc-200 p-6 flex flex-col gap-4 shadow-sm overflow-y-auto">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-blue-700 rounded-md flex items-center justify-center text-white font-bold">S</div>
-            <span className="text-2xl font-bold tracking-tight text-blue-700">SpareHub</span>
-          </div>
+        <>
+          {isMobile && sidebarOpen ? (
+            <div
+              className="fixed inset-0 bg-black/35 z-30 md:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          ) : null}
 
-          <SidebarLink href="/home" icon={<Home size={20} />} label="Home" pathname={pathname} />
-          <SidebarLink href="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" pathname={pathname} />
-          <SidebarLink href="/sales" icon={<DollarSign size={20} />} label="Sales" pathname={pathname} />
+          <nav
+            className={`
+              bg-white border-r border-zinc-200 p-6 flex flex-col gap-4 shadow-sm overflow-y-auto
+              ${isMobile
+                ? `fixed top-0 left-0 h-screen w-72 max-w-[85vw] z-40 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
+                : 'w-64 h-screen sticky top-0'
+              }
+            `}
+          >
+            <div className="flex items-center justify-between gap-3 mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-700 rounded-md flex items-center justify-center text-white font-bold">S</div>
+                <span className="text-2xl font-bold tracking-tight text-blue-700">SpareHub</span>
+              </div>
 
-          <MastersNav pathname={pathname} />
-          <AdminNav pathname={pathname} />
-        </nav>
+              {isMobile ? (
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="p-2 rounded-md text-zinc-600 hover:bg-zinc-100"
+                  aria-label="Close sidebar"
+                >
+                  <X size={18} />
+                </button>
+              ) : null}
+            </div>
+
+            <SidebarLink href="/home" icon={<Home size={20} />} label="Home" pathname={pathname} onNavigate={isMobile ? () => setSidebarOpen(false) : undefined} />
+            <SidebarLink href="/dashboard" icon={<LayoutDashboard size={20} />} label="Dashboard" pathname={pathname} onNavigate={isMobile ? () => setSidebarOpen(false) : undefined} />
+            <SidebarLink href="/sales" icon={<DollarSign size={20} />} label="Sales" pathname={pathname} onNavigate={isMobile ? () => setSidebarOpen(false) : undefined} />
+
+            <MastersNav pathname={pathname} onNavigate={isMobile ? () => setSidebarOpen(false) : undefined} />
+            <AdminNav pathname={pathname} onNavigate={isMobile ? () => setSidebarOpen(false) : undefined} />
+          </nav>
+        </>
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
         {showSidebar && (
-          <header className="h-16 bg-white border-b border-zinc-200 sticky top-0 z-10 px-8 flex items-center justify-between shadow-sm">
-            <div className="text-zinc-500 font-medium">
-              {/* Optional: Page Title based on pathname */}
-              {pathname.split('/').pop()?.toUpperCase()}
+          <header className="h-16 bg-white border-b border-zinc-200 sticky top-0 z-20 px-4 md:px-8 flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-3 text-zinc-500 font-medium">
+              {isMobile ? (
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="p-2 rounded-md text-zinc-600 hover:bg-zinc-100"
+                  aria-label="Open sidebar"
+                >
+                  <Menu size={20} />
+                </button>
+              ) : null}
+
+              <span>{pathname.split('/').pop()?.toUpperCase()}</span>
             </div>
 
             <div className="flex items-center gap-6">
@@ -121,7 +185,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
           </header>
         )}
 
-        <main className={showSidebar ? "p-8" : "w-full"}>
+        <main className={showSidebar ? "p-4 md:p-8" : "w-full"}>
           <AuthGuard>{children}</AuthGuard>
         </main>
       </div>
@@ -131,7 +195,7 @@ export default function ClientWrapper({ children }: { children: React.ReactNode 
 
 // --- SUB-COMPONENTS (MastersNav, AdminNav, SidebarLink remain largely the same) ---
 
-function MastersNav({ pathname }: { pathname: string }) {
+function MastersNav({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   const [open, setOpen] = useState(pathname.startsWith('/masters') && !pathname.includes('locations') && !pathname.includes('companies'));
   const mastersLinks = [
     { href: '/masters/inventory', label: 'Inventory' },
@@ -157,7 +221,7 @@ function MastersNav({ pathname }: { pathname: string }) {
       {open && (
         <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-zinc-100 pl-4">
           {mastersLinks.map((link) => (
-            <SidebarLink key={link.href} href={link.href} label={link.label} pathname={pathname} isSublink />
+            <SidebarLink key={link.href} href={link.href} label={link.label} pathname={pathname} isSublink onNavigate={onNavigate} />
           ))}
         </div>
       )}
@@ -165,7 +229,7 @@ function MastersNav({ pathname }: { pathname: string }) {
   );
 }
 
-function AdminNav({ pathname }: { pathname: string }) {
+function AdminNav({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   const [open, setOpen] = useState(pathname.includes('locations') || pathname.includes('companies') || pathname.includes('users'));
   const adminLinks = [
     { href: '/masters/locations', label: 'Locations' },
@@ -187,7 +251,7 @@ function AdminNav({ pathname }: { pathname: string }) {
       {open && (
         <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-zinc-100 pl-4">
           {adminLinks.map((link) => (
-            <SidebarLink key={link.href} href={link.href} label={link.label} pathname={pathname} isSublink />
+            <SidebarLink key={link.href} href={link.href} label={link.label} pathname={pathname} isSublink onNavigate={onNavigate} />
           ))}
         </div>
       )}
@@ -195,13 +259,14 @@ function AdminNav({ pathname }: { pathname: string }) {
   );
 }
 
-function SidebarLink({ href, icon, label, pathname, isSublink = false }: {
-  href: string; icon?: React.ReactNode; label: string; pathname: string; isSublink?: boolean
+function SidebarLink({ href, icon, label, pathname, isSublink = false, onNavigate }: {
+  href: string; icon?: React.ReactNode; label: string; pathname: string; isSublink?: boolean; onNavigate?: () => void
 }) {
   const isActive = pathname === href;
   return (
     <Link
       href={href}
+      onClick={onNavigate}
       className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors font-medium ${isActive
           ? 'bg-blue-100 text-blue-700'
           : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'
